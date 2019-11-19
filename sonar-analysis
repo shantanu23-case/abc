@@ -1,27 +1,11 @@
-node{
-   stage('SCM Checkout'){
-     git 'https://shantanu1234@bitbucket.org/shantanu1234/publicone.git'
-   }
-    
-   stage('SonarQube Analysis') {
-        def mvnHome =  tool name: 'maven-3', type: 'maven'
-        withSonarQubeEnv('case1111') { 
-          sh "${mvnHome}/bin/mvn sonar:sonar"
-        }
+node {
+  stage('SCM') {
+    git 'https://shantanu1234@bitbucket.org/shantanu1234/publicone.git'
+  }
+  stage('SonarQube analysis') {
+    withSonarQubeEnv(credentialsId: 'case111') {
+    def abc=tool 'Shantanuscanner';
+    sh """${abc}/bin/sonar-scanner -D sonar.projectKey=case1111 -D sonar.organization=case111 -D sonar.sources=. -D sonar.host.url=https://sonarcloud.io -D sonar.login=3784bde753d392744ba9b12906ff04dc0ea470d3"""
     }
-   
-   stage('Email Notification'){
-      mail bcc: '', body: '''Hi Welcome to jenkins email alerts
-      Thanks
-      Hari''', cc: '', from: '', replyTo: '', subject: 'Jenkins Job', to: 'hari.kammana@gmail.com'
-   }
-   stage('Slack Notification'){
-       slackSend baseUrl: 'https://hooks.slack.com/services/',
-       channel: '#jenkins-pipeline-demo',
-       color: 'good', 
-       message: 'Welcome to Jenkins, Slack!', 
-       teamDomain: 'javahomecloud',
-       tokenCredentialId: 'slack-demo'
-   }
-
+  }
 }
